@@ -7,9 +7,10 @@ class Admin extends CI_Controller
     {
         parent::__construct();
         $this->load->model('User_model', 'user');
-        // $this->load->model('Dashboard_model', 'dashboard');
-        // $this->load->model('Admin_model', 'admin');
-        // $this->load->model('Disaster_model', 'disaster');
+        $this->load->model('Purchase_model', 'purchase');
+        $this->load->model('Supplier_model', 'supplier');
+        $this->load->model('Product_model', 'product');
+        $this->load->model('Payment_model', 'payment');
         if (!$this->session->userdata('username')) {
             redirect('Auth');
         } else {
@@ -18,6 +19,8 @@ class Admin extends CI_Controller
             }
         };
     }
+
+    //User List
 
     public function index()
     {
@@ -28,39 +31,48 @@ class Admin extends CI_Controller
         $this->load->view('template/footer');
     }
 
+    public function getUser()
+    {
+        $id = $this->input->post('id');
+        $query = $this->user->getUserbyId($id);
+
+        echo json_encode($query);
+    }
+
+    public function delete()
+    {
+        $id = $this->input->post('id');
+        $query = $this->user->deleteById($id);
+
+        echo json_encode($query);
+    }
+
+    public function edit()
+    {
+        $id = $this->input->post('id');
+        $username = $this->input->post('username');
+        $query = $this->user->editById($id, $username);
+
+        echo json_encode($query);
+    }
+
+    //User Request
+
     public function request()
     {
         $data['user'] = $this->user->getUser($this->session->userdata('username'));
-        // $data['request'] = $this->admin->request();
+        $data['request'] = $this->purchase->getAllJoin();
+        $data['supplier'] = $this->supplier->getAll();
+
         $this->load->view('template/header');
         $this->load->view('admin/request', $data);
         $this->load->view('template/footer');
     }
 
-    public function payment()
-    {
-        $data['user'] = $this->user->getUser($this->session->userdata('username'));
-        // $data['disaster'] = $this->disaster->getDisaster();
-        // $data['province'] = $this->dashboard->province();
-        $this->load->view('template/header');
-        $this->load->view('admin/payment', $data);
-        $this->load->view('template/footer');
-    }
-
-    public function getPhoto()
-    {
-        $id = $this->input->post('id');
-        $data['request'] = $this->admin->requestbyId($id);
-
-        echo json_encode($data);
-    }
-
     public function reject()
     {
         $id = $this->input->post('id');
-        $this->db->set('is_active', 2);
-        $this->db->where('id_family', $id);
-        $query = $this->db->update('family');
+        $query = $this->purchase->reject($id);
 
         echo json_encode($query);
     }
@@ -68,61 +80,140 @@ class Admin extends CI_Controller
     public function approve()
     {
         $id = $this->input->post('id');
-        $this->db->set('is_active', 1);
-        $this->db->where('id_family', $id);
-        $query = $this->db->update('family');
+        $query = $this->purchase->approve($id);
 
         echo json_encode($query);
     }
 
-    public function addDisaster()
-    {
-        $data = [
-            'name' => $this->input->post('selectDisaster'),
-            'id_region' => $this->input->post('selectProvince'),
-            'date' => $this->input->post('date'),
-            'casualty' => $this->input->post('casualty'),
-        ];
-        $this->db->insert('disaster', $data);
-        redirect('admin/disaster');
-    }
+    //User Payment
 
-    public function changeStatus()
-    {
-        $nik = $this->input->post('id');
-        $status = $this->input->post('value');
-        $data = array(
-            'status' => $status,
-        );
-
-        $this->db->where('nik', $nik);
-        $query = $this->db->update('user', $data);
-        echo json_encode($query);
-    }
-
-    public function report()
+    public function payment()
     {
         $data['user'] = $this->user->getUser($this->session->userdata('username'));
-        $data['report'] = $this->admin->report();
+        $data['allUser'] = $this->user->getAllUser();
+        $data['payment'] = $this->payment->getAll();
         $this->load->view('template/header');
-        $this->load->view('admin/report', $data);
+        $this->load->view('admin/payment', $data);
         $this->load->view('template/footer');
     }
 
-    public function getPhotoReport()
+    public function rejectPay()
     {
         $id = $this->input->post('id');
-        $data['report'] = $this->admin->reportbyId($id);
+        $query = $this->payment->reject($id);
 
-        echo json_encode($data);
+        echo json_encode($query);
     }
 
-    public function deleteReport()
+    public function approvePay()
     {
         $id = $this->input->post('id');
-        $this->db->set('is_active', 0);
-        $this->db->where('id_report', $id);
-        $query = $this->db->update('report');
+        $query = $this->payment->approve($id);
+
+        echo json_encode($query);
+    }
+
+    public function getPayment()
+    {
+        $id = $this->input->post('id');
+        $query = $this->payment->getById($id);
+
+        echo json_encode($query);
+    }
+
+    //Supplier
+
+    public function supplier()
+    {
+        $data['user'] = $this->user->getUser($this->session->userdata('username'));
+        $data['supplier'] = $this->supplier->getAll();
+        // $data['province'] = $this->dashboard->province();
+        $this->load->view('template/header');
+        $this->load->view('admin/supplier', $data);
+        $this->load->view('template/footer');
+    }
+
+    public function saveSupplier()
+    {
+        $id = $this->input->post('id_supplier');
+        $data = array(
+            'name' => $this->input->post('supplier'),
+        );
+
+        if ($id != null) {
+            $this->supplier->update($data, $id);
+        } else {
+            $this->supplier->insert($data);
+        }
+
+        redirect('admin/supplier');
+    }
+
+    public function getSupplierById()
+    {
+        $id = $this->input->post('id');
+        $query = $this->supplier->getById($id);
+
+        echo json_encode($query);
+    }
+
+    public function deleteSupplier()
+    {
+        $id = $this->input->post('id');
+        $query = $this->supplier->deleteById($id);
+
+        echo json_encode($query);
+    }
+
+    //Product
+
+    public function product()
+    {
+        $data['user'] = $this->user->getUser($this->session->userdata('username'));
+        $data['product'] = $this->product->getAll();
+        $data['supplier'] = $this->supplier->getAll();
+        $this->load->view('template/header');
+        $this->load->view('admin/product', $data);
+        $this->load->view('template/footer');
+    }
+
+    public function saveProduct()
+    {
+        $id = $this->input->post('id_product');
+        $data = array(
+            'name' => $this->input->post('product'),
+            'id_supplier' => $this->input->post('supplier'),
+        );
+
+        if ($id != null) {
+            $this->product->update($data, $id);
+        } else {
+            $this->product->insert($data);
+        }
+
+        redirect('admin/Product');
+    }
+
+    public function getProductById()
+    {
+        $id = $this->input->post('id');
+        $query = $this->product->getById($id);
+
+        echo json_encode($query);
+    }
+
+    public function getAllProductById()
+    {
+        $id = $this->input->post('id');
+        $query = $this->product->getAllById($id);
+
+        echo json_encode($query);
+    }
+
+    public function deleteProduct()
+    {
+        $id = $this->input->post('id');
+        $query = $this->product->deleteById($id);
 
         echo json_encode($query);
     }

@@ -2,23 +2,6 @@
 <?php $this->view('template/sidebar'); ?>
 
 <main id="main" class="main">
-    <div class="modal fade" id="basicModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ready to leave?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Select "Logout" below if you are ready to logout.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="<?= base_url('Auth/logout'); ?>">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div><!-- End Basic Modal-->
     <div class="pagetitle">
         <h1>User List</h1>
         <nav>
@@ -46,17 +29,57 @@
                         <td> <?= $u['id_user'] ?></td>
                         <td> <?= $u['username'] ?></td>
                         <td> <?= $u['role'] ?></td>
-                        <td><select class="form-select status">
-                                <option id="" value="0">Delete</option>
-                                <option id="" value="1">Edit</option>
-                                <option id="" value="2">Detail</option>
-                            </select></td>
+                        <td>
+                            <button id="<?= $u['id_user']; ?>" class="btn btn-danger delete">Delete</button>
+                            <button id="<?= $u['id_user']; ?>" class="btn btn-success edit">Edit</button>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
 
-</main><!-- End #main -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger delete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- End Basic Modal-->
 
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3">
+                        <div class="col-12">
+                            <label for="inputNanme4" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username">
+                        </div>
+                    </form><!-- Vertical Form -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary submit">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- End Basic Modal-->
+
+</main><!-- End #main -->
+<script src="<?= base_url('assets'); ?>/js/admin/list.js"></script>
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

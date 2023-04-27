@@ -3,58 +3,41 @@
 
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Purchase</h1>
+        <h1>Product</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?= base_url('admin'); ?>">Home</a></li>
-                <li class="breadcrumb-item">User</li>
-                <li class="breadcrumb-item active">Purchase</li>
+                <li class="breadcrumb-item">Admin</li>
+                <li class="breadcrumb-item active">Product</li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
+    <div>
+        <button class="btn btn-primary mb-4 add">Add</button>
+    </div>
     <div class="card pb-4 pt-4 pr-4 pl-4">
         <table class="table table-striped table-bordered" id="example">
             <thead>
                 <tr>
                     <th scope="col">ID</th>
-                    <th scope="col">Shop</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">Supplier</th>
+                    <th scope="col">Name</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($purchase as $i => $u) : ?>
+                <?php foreach ($product as $i => $u) : ?>
                     <tr>
-                        <td> <?= $u['id_purchase'] ?></td>
+                        <td> <?= $u['id_product'] ?></td>
                         <td><?php foreach ($supplier as $s) : ?>
                                 <?php if ($s['id_supplier'] == $u['id_supplier']) {
                                     echo $s['name'];
                                 } ?>
                             <?php endforeach; ?></td>
-                        <td><?= $u['harga'] ?></td>
-                        <td><?php foreach ($payment as $p) : ?>
-                                <?php if ($p['id_purchase'] == $u['id_purchase']) {
-                                    switch ($p['status']) {
-                                        case 0:
-                                            echo "Wait to be Approved";
-                                            break;
-                                        case 1:
-                                            echo "Approved, On delivery";
-                                            break;
-                                        case 2:
-                                            echo "Rejected, contact Admin for more info";
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                } else {
-                                    echo "Not Payed";
-                                } ?>
-                            <?php endforeach; ?>
-                        </td>
+                        <td><?= $u['name']; ?></td>
                         <td>
-                            <button id="<?= $u['id_purchase']; ?>" class="btn btn-primary detail">Pay</button>
+                            <button id="<?= $u['id_product']; ?>" class="btn btn-danger delete">Delete</button>
+                            <button id="<?= $u['id_product']; ?>" class="btn btn-success edit">Edit</button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -65,43 +48,34 @@
     <div class="modal fade" id="addModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form id="frm" method="POST" action="<?= base_url(); ?>/user/savePayment" enctype="multipart/form-data">
+                <form id="frm" method="POST" action="<?= base_url(); ?>/admin/saveProduct">
                     <div class="modal-header">
-                        <h5 class="modal-title">Payment</h5>
+                        <h5 class="modal-title">Purchase Model</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row mt-3">
+                        <div class="row mb-3">
                             <input class="form-control" type="text" name="id_purchase" id="id_purchase" hidden>
                             <div class="col-12">
-                                <label for="inputNanme4" class="form-label">Shop</label>
-                                <select class="form-select" id="supplier" name="supplier" disabled>
+                                <label for="inputNanme4" class="form-label">Supplier</label>
+                                <select class="form-select" id="supplier" name="supplier" required>
                                     <option selected disabled value="">Choose Supplier</option>
                                     <?php foreach ($supplier as $s) : ?>
                                         <option value="<?= $s['id_supplier']; ?>"><?= $s['name']; ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <div id="error-msg"></div>
                             </div>
                         </div>
-                        <div class="row mt-3">
+                        <div class="row">
                             <div class="col-12">
-                                <label for="inputNanme4" class="form-label">Price</label>
-                                <input class="form-control" type="text" name="price" id="price" readonly>
-                                <div id="error-msg"></div>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <label for="inputNanme4" class="form-label">Pay</label>
-                                <input class="form-control" type="file" name="payment" id="payment">
-                                <div id="error-msg"></div>
+                                <label for="inputNanme4" class="form-label">Product name</label>
+                                <input class="form-control" type="text" name="product" id="product" required>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <input type="submit" class="btn btn-primary" id="submit" value="Submit">
                     </div>
                 </form>
             </div>
@@ -129,5 +103,5 @@
 </main><!-- End #main -->
 
 
-<script src="<?= base_url('assets'); ?>/js/user/payment.js"></script>
+<script src="<?= base_url('assets'); ?>/js/admin/product.js"></script>
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

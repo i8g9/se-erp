@@ -26,6 +26,18 @@
                 </a>
             </li><!-- End Dashboard Nav -->
 
+            <a class="nav-link collapsed" href="<?= base_url('admin/supplier'); ?>">
+                <i class="bi bi-bank"></i>
+                <span>Supplier</span>
+            </a>
+            </li><!-- End Dashboard Nav -->
+
+            <a class="nav-link collapsed" href="<?= base_url('admin/product'); ?>">
+                <i class="bi bi-archive"></i>
+                <span>Product</span>
+            </a>
+            </li><!-- End Dashboard Nav -->
+
         <?php endif; ?>
 
         <li class="nav-heading">Pages</li>
